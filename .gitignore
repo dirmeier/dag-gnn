@@ -18,3 +18,4 @@ dist
 *.iml
 *.ipr
 *.iws
+.Rproj.user
