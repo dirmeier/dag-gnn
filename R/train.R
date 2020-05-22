@@ -63,7 +63,8 @@ setMethod(
 
     methods::new(
       "sem_vae",
-      sem = vae
+      sem = vae,
+      data = data
     )
   }
 )

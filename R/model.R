@@ -32,6 +32,7 @@ model <- function(n, p, n_hidden) {
     )
 
     self$loss <- NA_real_
+    self$data <- NULL
     self$I <- tf$eye(p, dtype = "float32")
     self$z_mean <- NULL
     self$z_var <- NULL

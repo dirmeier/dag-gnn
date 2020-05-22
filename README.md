@@ -1,7 +1,7 @@
 # DAG-GNN
 
 [![Project Status](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
-[![Build Status](https://travis-ci.org/dirmeier/daggnn.svg?branch=master)](https://travis-ci.org/dirmeier/daggnn)
+[![Build Status](https://travis-ci.org/dirmeier/dag-gnn.svg?branch=master)](https://travis-ci.org/dirmeier/dag-gnn)
 
 > A variational autoencoder to learn the DAG of a structural equations model
 
@@ -25,7 +25,7 @@ Have a look at a sample case [here]().
 Install the package using:
 
 ```r
-remotes::install_github("dirmeier/daggnn")
+remotes::install_github("dirmeier/dag-gnn")
 ```
 
 ## Author

@@ -113,3 +113,19 @@ setGeneric(
 #' @return  returns a \code{matrix}
 #'
 setGeneric("sem", function(obj) standardGeneric("sem"))
+
+
+#' @title Get the data set the SEM-VAE has been trained with
+#'
+#' @description Returns the data set the SEM-VAE has been trained with
+#'  as \code{matrix}
+#'
+#' @export
+#' @docType methods
+#' @rdname dataSet-methods
+#'
+#' @param obj  the object for which you want to extract the data
+#' @return  returns a \code{matrix}
+#'
+setGeneric("dataSet", function(obj) standardGeneric("dataSet"))
+

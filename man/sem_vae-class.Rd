@@ -14,7 +14,9 @@ A class representing a structural equations model variational autoencoder,
 
 \describe{
 \item{\code{sem}}{a \code{kerastools.model.RModel} object that encodes the
-\code{sem_vae}-}
+\code{sem_vae}}
+
+\item{\code{data}}{the data set the SEM-VAE has been trained with}
 }}
 
 \references{

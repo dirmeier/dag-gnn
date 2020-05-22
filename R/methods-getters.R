@@ -24,3 +24,8 @@
 #' @rdname sem-methods
 #' @aliases sem,sem_vae-method
 setMethod("sem", signature(obj = "sem_vae"), function(obj) obj@sem$sem$numpy())
+
+
+#' @rdname dataSet-methods
+#' @aliases dataSet,sem_vae-method
+setMethod("dataSet", signature(obj = "sem_vae"), function(obj) obj@data$numpy())

@@ -33,6 +33,12 @@
 #'
 plot.sem_vae <- function(x, ...) {
   adj <- sem(x)
+
+  cols <- colnames(dataSet(x))
+  if (is.null(cols))
+    cols <- seq(ncol(dataSet(x)))
+  colnames(adj) <- rownames(adj) <- cols
+
   igraph::graph_from_adjacency_matrix(adj, weighted = TRUE) %>%
     ggraph::ggraph(layout = "stress") +
     ggraph::geom_edge_link(

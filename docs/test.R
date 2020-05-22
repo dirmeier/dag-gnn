@@ -30,7 +30,7 @@ data <- X
 
 
 
-vae <- train(data, n_epochs = 300, c = 10000, lambda=10)
+vae <- train(data, n_epochs = 30, c = 10000, lambda=10)
 
 
 vae

@@ -19,6 +19,7 @@
 
 
 setOldClass("kerastools.model.RModel")
+setOldClass("tensorflow.tensor")
 
 
 #' SEM-VAE class
@@ -30,7 +31,9 @@ setOldClass("kerastools.model.RModel")
 #'  underlying the SEM.
 #'
 #' @slot sem a \code{kerastools.model.RModel} object that encodes the
-#'  \code{sem_vae}-
+#'  \code{sem_vae}
+#' @slot data the data set the SEM-VAE has been trained with
+#'
 #'
 #' @references
 #'  Yu, Yue and Chen, Jie and Gao, Tian and Yu, Mo (2019). DAG-GNN: DAG Structure
@@ -38,5 +41,5 @@ setOldClass("kerastools.model.RModel")
 #'
 setClass(
   "sem_vae",
-  slots = list(sem = "kerastools.model.RModel")
+  slots = list(sem = "kerastools.model.RModel", data = "tensorflow.tensor")
 )
