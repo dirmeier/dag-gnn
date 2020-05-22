@@ -1,4 +1,4 @@
-# daggnn: a variational autoencoder to learn the DAG of a structural equations model
+# daggnn: Just Another Approach Of An Amateur To Infectious Disease Modelling
 #
 # Copyright (C) 2020 Simon Dirmeier
 #
@@ -15,21 +15,11 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with daggnn If not, see <http://www.gnu.org/license
+# along with daggnn If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @noRd
-#' @importFrom tensorflow tf
-#' @importFrom keras layer_dense
-dense <- function(name, p, activation) {
-  init <- tf$random_normal_initializer(mean = 0, stddev = 0.1)
-  keras::layer_dense(
-    name = name,
-    units = p,
-    activation = activation,
-    use_bias = TRUE,
-    kernel_regularizer = regularizer_l2(l = 0.1),
-    kernel_initializer = init,
-    dtype = "float32"
-  )
+#' @export
+#' @method print sem.vae
+print.sem.vae <- function(x, ...) {
+  cat("<sem.vae object>")
 }

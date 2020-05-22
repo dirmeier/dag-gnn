@@ -1,11 +1,28 @@
 Package: daggnn
 Type: Package
-Title: What the Package Does (Title Case)
+Title: A variational autoencoder to learn the DAG of a structural equations model
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: 
+    person(given = "Simon",
+           family = "Dirmeier",
+           role = c("aut", "cre"),
+           email = "simon.dirmeier@web.de")
+Description: A variational autoencoder to learn the DAG of a structural equations model
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: 
+    R (>= 3.4),
+    tensorflow (>= 2.2.0),
+    tfprobability (>= 0.10.0),
+    keras (>= 2.2.0)
+Imports: 
+    ggraph,
+    dagitty,
+    igraph
+RoxygenNote: 7.1.0
+Suggests: 
+    lintr,
+    styler,
+    testthat,
+    rmarkdown
