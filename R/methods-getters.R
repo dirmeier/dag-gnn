@@ -18,25 +18,9 @@
 # along with daggnn If not, see <http://www.gnu.org/licenses/>.
 
 
-setOldClass("kerastools.model.RModel")
+#' @include AllClasses.R
 
 
-#' SEM-VAE class
-#'
-#' @description
-#'  A class representing a structural equations model variational autoencoder,
-#'  i.e., a structural equations model variational autoencoder.
-#'  The \code{sem_vae} can be used to infer the directed acyclic graph
-#'  underlying the SEM.
-#'
-#' @slot sem a \code{kerastools.model.RModel} object that encodes the
-#'  \code{sem_vae}-
-#'
-#' @references
-#'  Yu, Yue and Chen, Jie and Gao, Tian and Yu, Mo (2019). DAG-GNN: DAG Structure
-#'  Learning with Graph Neural Networks. ICML
-#'
-setClass(
-  "sem_vae",
-  slots = list(sem = "kerastools.model.RModel")
-)
+#' @rdname sem-methods
+#' @aliases sem,sem_vae-method
+setMethod("sem", signature(obj = "sem_vae"), function(obj) obj@sem$sem$numpy())

@@ -1,51 +1,30 @@
 language: r
-sudo: false
-r: devel
+sudo: required
+dist: trusty
+
 cache: packages
 
-latex: true
-
-
 env:
-  matrix:
-    - CXX_OLEVEL=2 CXX=clang++
+  global:
+    - R_BUILD_ARGS="--no-build-vignettes --no-manual"
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual --as-cran"
+    - LINTR_COMMENT_BOT=false
 
-matrix:
-  include:
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-5.0' ]
-          packages:
-            - llvm-5.0-dev
-      env:
-        - CXX_OLEVEL=2 CXX=clang++
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install python3
+  - pip install --upgrade --ignore-installed --user travis virtualenv
+  - R -e 'tfprobability::install_tfprobability(version = "0.7.0", tensorflow = "2.1.0")'
+  - R -e 'tensorflow::tf_config()'
 
-
-before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - mkdir -p ~/.R/
-  - echo "CXX = `R CMD config CXX`" >> ~/.R/Makevars
-  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g0 -flto -stdlib=libc++" >> ~/.R/Makevars
-  - echo "LDFLAGS += -flto -stdlib=libc++" >> ~/.R/Makevars
-  - export CLANG_EXTRA_ARG=""
-  - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
-  - sed -i.bak "s/ g++/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
-  - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
-
-script:
-  - |
-    travis_wait 42 R CMD build .
-    travis_wait 59 R CMD check jaaoaatidm*tar.gz
-
-after_script:
-  - tar -ztvf jaaoaatidm_*.tar.gz
-  - echo ${NOT_CRAN}
+r_packages:
+  - devtools
+  - covr
+  - testthat
+  - knitr
+  - rmarkdown
 
 after_success:
-  - travis_wait 40 tar -C .. -xf $PKG_TARBALL
-
-after_failure:
-- cat jaaoaatidm.Rcheck/00*
+  - tar -C .. -xf $PKG_TARBALL
+  - Rscript -e 'covr::codecov()'
+  - Rscript -e 'lintr::lint_package()'

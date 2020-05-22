@@ -18,22 +18,17 @@
 # along with daggnn If not, see <http://www.gnu.org/licenses/>.
 
 
-
-# daggnn: a variational autoencoder to learn the DAG of a structural
-# equations model
+#' @title daggnn
 #'
-#' @description daggnn implement s
+#' @description daggnn implements a variational autoencoder to learn the DAG
+#'  of a structural equations model
 #'
 #' @author Simon Dirmeier
 #' @docType package
 #' @name daggnn-package
 #' @aliases daggnn
 #'
-#' @import R6
-#' @import tensorflow
-#' @import keras
-#' @import tfprobability
-#'
 #' @references
-#' Yu, Yue and Chen, Jie and Gao, Tian and Yu, Mo (2019). DAG-GNN: DAG Structure
-#' Learning with Graph Neural Networks. ICML
+#'  Yu, Yue and Chen, Jie and Gao, Tian and Yu, Mo (2019). DAG-GNN: DAG Structure
+#'  Learning with Graph Neural Networks. ICML
+globalVariables(c("%>%", "%as%", ""))

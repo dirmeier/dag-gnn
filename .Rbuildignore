@@ -1,2 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+.git
+.lintr
+.travis.yml
+analyse/
+codecov.yml
+data/
+docs/
+LICENSE

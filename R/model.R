@@ -19,18 +19,19 @@
 
 
 #' @noRd
-#' @importFrom tensorflow tf
+#' @importFrom tensorflow tf shape
 #' @importFrom keras keras_model_custom
+#' @importFrom stats rnorm
 model <- function(n, p, n_hidden) {
   keras_model_custom(function(self) {
-    m <- matrix(0, p, p)
-    m[upper.tri(m)] <- rnorm(p * (p - 1) / 2)
+    m <- matrix(stats::rnorm(p * p, 0, .1), p, p)
 
     self$A <- tf$Variable(
       m,
       name = "A", trainable = TRUE, dtype = "float32"
     )
 
+    self$loss <- NA_real_
     self$I <- tf$eye(p, dtype = "float32")
     self$z_mean <- NULL
     self$z_var <- NULL
@@ -44,8 +45,16 @@ model <- function(n, p, n_hidden) {
     self$dense42 <- dense("d42", p, "linear")
 
 
+    self$prior <- function() {
+      tfp$distributions$Independent(
+        tfp$distributions$Normal(
+          loc = tf$zeros(shape(n, p)), scale = tf$ones(shape(n, p))
+        )
+      )
+    }
+
     # Z = f(g(X)) * (I - A)
-    self$encoder <- function(x) {
+    self$posterior <- function(x) {
       tri <- self$I - self$A
 
       self$z_mean <- x %>%
@@ -59,13 +68,15 @@ model <- function(n, p, n_hidden) {
         tf$matmul(tri) %>%
         tf$exp()
 
-      tfp$distributions$Normal(
-        loc = self$z_mean, scale = tf$sqrt(self$z_var)
+      tfp$distributions$Independent(
+        tfp$distributions$Normal(
+          loc = self$z_mean, scale = tf$sqrt(self$z_var)
+        )
       )
     }
 
     # X = f(g( Z * solve(I - A) ))
-    self$decoder <- function(z) {
+    self$likelihood <- function(z) {
       tri.inv <- tf$linalg$inv(self$I - self$A)
 
       x_mean <- tf$matmul(z, tri.inv) %>%
@@ -77,27 +88,21 @@ model <- function(n, p, n_hidden) {
         self$dense42() %>%
         tf$exp()
 
-      tfp$distributions$Normal(
-        loc = x_mean, scale = tf$sqrt(x_var)
+      tfp$distributions$Independent(
+        tfp$distributions$Normal(
+          loc = x_mean, scale = tf$sqrt(x_var)
+        )
       )
-    }
-
-    self$sample_decoder <- function(z) {
-      self$decoder(z)$sample()
-    }
-
-    self$sample_encoder <- function(x) {
-      self$encoder(x)$sample()
     }
 
     function(x, mask = NULL, training = FALSE) {
       tf$where(
-        tf$is_nan(self$A), tf.zeros_like(self$A), self$A
+        tf$math$is_nan(self$A), tf$zeros_like(self$A), self$A
       )
 
-      enc <- self$encoder(x)
+      enc <- self$posterior(x)
       z <- enc$sample()
-      dec <- self$decoder(z)
+      dec <- self$likelihood(z)
       dec
     }
   })

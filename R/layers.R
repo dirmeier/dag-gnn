@@ -20,7 +20,7 @@
 
 #' @noRd
 #' @importFrom tensorflow tf
-#' @importFrom keras layer_dense
+#' @importFrom keras layer_dense regularizer_l2
 dense <- function(name, p, activation) {
   init <- tf$random_normal_initializer(mean = 0, stddev = 0.1)
   keras::layer_dense(
@@ -28,7 +28,7 @@ dense <- function(name, p, activation) {
     units = p,
     activation = activation,
     use_bias = TRUE,
-    kernel_regularizer = regularizer_l2(l = 0.1),
+    kernel_regularizer = keras::regularizer_l2(l = 1),
     kernel_initializer = init,
     dtype = "float32"
   )

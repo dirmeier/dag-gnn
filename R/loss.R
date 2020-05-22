@@ -20,26 +20,22 @@
 
 #' @noRd
 #' @importFrom tensorflow tf
-loss <- function(data, model, alpha, lambda, c, beta) {
-  likelihood <- model$call(data)
-  z <- model$sample_encoder(data)
+#' @importFrom tfprobability tfp
+loss <- function(data, vae, alpha, lambda, c, beta) {
+  likelihood <- vae$call(data)
+  prior <- vae$prior()
+  posterior <- vae$posterior(data)
 
-  logpx_z <- tf$reduce_sum(
-    likelihood$log_prob(data),
-    axis = 1L
+  logpx_z <- likelihood$log_prob(data)
+  divergence <- tfp$distributions$kl_divergence(
+    posterior, prior
   )
-  logpz <- tf$reduce_sum(
-    tfp$distributions$Normal(0, 1)$log_prob(z),
-    axis = 1L
-  )
-  logqz <- tf$reduce_sum(tfp$distributions$Normal(
-    model$z_mean, tf$sqrt(model$z_var)
-  )$log_prob(z), axis = 1L)
-  obj <- -tf$reduce_mean(logpx_z - logqz + logpz)
 
-  lang <- h(model, alpha)
+  obj <- -tf$reduce_mean(logpx_z - divergence)
+
+  lang <- h(vae, alpha)
   lang <- lambda * lang + 0.5 * c * lang^2
-  sprs <- ell1(model, beta)
+  sprs <- ell1(vae, beta)
 
   loss <- obj + lang + sprs
   loss
@@ -47,8 +43,8 @@ loss <- function(data, model, alpha, lambda, c, beta) {
 
 
 #' @noRd
-h <- function(model, alpha) {
-  A <- model$A
+h <- function(vae, alpha) {
+  A <- vae$A
   .h(A, alpha)
 }
 
@@ -57,7 +53,6 @@ h <- function(model, alpha) {
 .h <- function(A, alpha) {
   n <- A$shape[[1]]
   p <- A$shape[[2]]
-  assertthat::assert_that(n == p)
 
   I <- tf$eye(p)
   e <- I + alpha * tf$math$multiply(A, A)
@@ -71,9 +66,9 @@ h <- function(model, alpha) {
 
 
 #' @noRd
-ell1 <- function(model, beta) {
+ell1 <- function(vae, beta) {
   if (beta == 0) {
     return(0)
   }
-  beta * tf$reduce_sum(tf$abs(model$A))
+  beta * tf$reduce_sum(tf$abs(vae$A))
 }

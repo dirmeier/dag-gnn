@@ -18,8 +18,9 @@
 # along with daggnn If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @export
-#' @method print sem.vae
-print.sem.vae <- function(x, ...) {
-  cat("<sem.vae object>")
-}
+#' @include AllClasses.R
+
+
+#' @noRd
+#' @aliases show,sem_vae-method
+setMethod("show", "sem_vae", function(object) cat("<a sem_vae object>"))

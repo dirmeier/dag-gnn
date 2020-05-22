@@ -18,92 +18,110 @@
 # along with daggnn If not, see <http://www.gnu.org/licenses/>.
 
 
-#' @noRd
+#' @rdname train-methods
+#' @importFrom methods new
 #' @importFrom tensorflow tf
-optim <- function(
-                  data,
-                  n_in,
-                  n_hidden,
-                  n_epochs = 100,
-                  learning_rate = 0.01,
-                  threshold = 0.3,
-                  c = 1,
-                  lambda = 0,
-                  alpha = 1 / data$shape[[2]],
-                  beta = 0,
-                  eta = 1,
-                  gamma = 1,
-                  tol = 1e-8) {
-  best.model <- NULL
-  lang.old <- 0
-  while (c < 1000) {
-    vae <- sem.vae(n, p)
-    loss <- train(
-      model = vae,
-      data = data,
-      n_epochs = n_epochs,
-      learning_rate = learning_rate,
-      threshold = threshold,
-      c = c,
-      lambda = lambda,
-      alpha = alpha,
-      beta = beta
+#' @importFrom purrr transpose
+#' @importFrom keras optimizer_adam
+setMethod(
+  "train",
+  signature = signature(data = "matrix"),
+  function(data,
+           n_hidden,
+           n_epochs,
+           learning_rate,
+           threshold,
+           c,
+           lambda,
+           alpha,
+           beta,
+           debug) {
+    vae <- model(nrow(data), ncol(data), n_hidden)
+    data <- tf$cast(data, "float32")
+
+    optimizer <- keras::optimizer_adam(learning_rate)
+
+    for (ep in seq_len(n_epochs)) {
+      with(tf$GradientTape() %as% t, {
+        lo <- loss(data, vae, alpha, lambda, c, beta)
+      })
+
+      gradients <- t$gradient(lo, vae$trainable_variables)
+      optimizer$apply_gradients(purrr::transpose(list(
+        gradients, vae$trainable_variables
+      )))
+
+      if (debug) {
+        tf$print("Loss:", lo)
+      }
+    }
+
+    vae$loss <- lo
+    vae$sem <- tf$math$multiply(
+      vae$A, tf$cast(tf$abs(vae$A) > threshold, "float32")
     )
-    model <- list(vae = vae, loss = loss)
 
-    if (is.null(best.model) || (model$loss < best.model$loss)$numpy()) {
-      best.model <- model
-    }
-
-    lang <- h(vae, alpha)
-    lambda <- lambda + c * lang
-    if ((tf$abs(lang) > gamma * tf$abs(lang.old))$numpy()) {
-      c <- c * eta
-    }
-    lang.old <- lang
-
-    if (lang$numpy() < tol) {
-      break
-    }
+    methods::new(
+      "sem_vae",
+      sem = vae
+    )
   }
+)
 
-  best.model
-}
 
-#' @noRd
+#' @rdname optim-methods
+#' @importFrom methods new
 #' @importFrom tensorflow tf
-train <- function(
-                  model,
-                  data,
-                  n_epochs,
-                  learning_rate,
-                  threshold = 0.3,
-                  c = 1,
-                  lambda = 0,
-                  alpha = 1 / data$shape[[2]],
-                  beta = 0,
-                  msg = FALSE) {
-  optimizer <- optimizer_adam(learning_rate)
+setMethod(
+  "optim",
+  signature = signature(data = "matrix"),
+  function(data,
+           n_hidden,
+           n_epochs,
+           learning_rate,
+           threshold,
+           c,
+           lambda,
+           alpha,
+           beta,
+           eta,
+           gamma,
+           tol) {
+    best.model <- NULL
+    lang.old <- 0
 
-  data <- tf$cast(data, "float32")
-  for (ep in seq_len(n_epochs)) {
-    with(tf$GradientTape() %as% t, {
-      lo <- loss(data, model, alpha, lambda, c, beta)
-    })
+    while (c < 1000) {
+      vae <- train(
+        data = data,
+        n_hidden = n_hidden,
+        n_epochs = n_epochs,
+        learning_rate = learning_rate,
+        threshold = threshold,
+        c = c,
+        lambda = lambda,
+        alpha = alpha,
+        beta = beta,
+        debug = FALSE
+      )
 
-    gradients <- t$gradient(lo, model$trainable_variables)
-    optimizer$apply_gradients(purrr::transpose(list(
-      gradients, model$trainable_variables
-    )))
+      model <- list(model = vae@sem, loss = vae@sem$loss)
+      if (is.null(best.model) || (loss < best.model$loss)$numpy()) {
+        best.model <- model
+      }
 
-    if (msg) {
-      tf$print("Loss:", lo)
+      lang <- h(vae@sem, alpha)
+      lambda <- lambda + c * lang
+      if ((tf$abs(lang) > gamma * tf$abs(lang.old))$numpy()) {
+        c <- c * eta
+      }
+      lang.old <- lang
+
+      if (lang$numpy() < tol) {
+        break
+      }
     }
+
+
+    best.model
   }
-
-  model$sem <- tf$math$multiply(
-    model$A, tf$cast(tf$abs(model$A) > threshold, "float32")
-  )
-
-  invisible(lo)
-}
+)

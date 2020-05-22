@@ -7,7 +7,9 @@ Authors@R:
            family = "Dirmeier",
            role = c("aut", "cre"),
            email = "simon.dirmeier@web.de")
-Description: A variational autoencoder to learn the DAG of a structural equations model
+Description: daggnn implements a variational autoencoder to learn the DAG 
+ of a structural equations model. The variational autoencoder makes use of the 
+ structure of a general SEM and optimizes this structure.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -19,10 +21,26 @@ Depends:
 Imports: 
     ggraph,
     dagitty,
-    igraph
+    igraph,
+    methods,
+    purrr,
+    stats,
+    ggplot2,
+    rlang
 RoxygenNote: 7.1.0
 Suggests: 
     lintr,
     styler,
     testthat,
     rmarkdown
+Collate: 
+    'AllClasses.R'
+    'AllGenerics.R'
+    'daggnn-package.R'
+    'layers.R'
+    'loss.R'
+    'methods-getters.R'
+    'methods-plot.R'
+    'methods-print.R'
+    'model.R'
+    'train.R'
