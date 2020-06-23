@@ -100,6 +100,9 @@ model <- function(n, p, n_hidden) {
       tf$where(
         tf$math$is_nan(self$A), tf$zeros_like(self$A), self$A
       )
+      tf$where(
+        tf$math$is_inf(self$A), tf$zeros_like(self$A), self$A
+      )
 
       enc <- self$posterior(x)
       z <- enc$sample()

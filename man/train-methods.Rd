@@ -8,7 +8,7 @@
 \usage{
 train(
   data,
-  n_hidden = ceiling(ncol(data)),
+  n_hidden = ncol(data),
   n_epochs = 100,
   learning_rate = 0.01,
   threshold = 0.3,
@@ -21,7 +21,7 @@ train(
 
 \S4method{train}{matrix}(
   data,
-  n_hidden = ceiling(ncol(data)),
+  n_hidden = ncol(data),
   n_epochs = 100,
   learning_rate = 0.01,
   threshold = 0.3,

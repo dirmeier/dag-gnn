@@ -18,14 +18,17 @@ and enforce acyclicity with an equality constraint.
 **CAUTION**: I package is work in progress. Sofar I haven't managed to get 
 improved estimates of the DAGs as described in the original publication. 
 
-Have a look at a sample case [here]().
+You can find a case study that compares DAG-GNN with the PC-algorithm and
+a score-based approach to learn the structure of a causal Bayes net
+[here](https://dirmeier.github.io/dag-gnn/index.html). 
 
 ## Installation
-
-Install the package using:
+ 
+The relevant code that is used in this case study is implemented as an R-package. You can install it using the latest GitHub 
+[release](https://github.com/dirmeier/dag-gnn/releases/):
 
 ```r
-remotes::install_github("dirmeier/dag-gnn")
+remotes::install_github("dirmeier/dag-gnn@v0.1.0")
 ```
 
 ## Author

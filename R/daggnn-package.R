@@ -31,4 +31,5 @@
 #' @references
 #'  Yu, Yue and Chen, Jie and Gao, Tian and Yu, Mo (2019). DAG-GNN: DAG Structure
 #'  Learning with Graph Neural Networks. ICML
+#'
 globalVariables(c("%>%", "%as%"))

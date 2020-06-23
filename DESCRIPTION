@@ -40,7 +40,6 @@ Collate:
     'layers.R'
     'loss.R'
     'methods-getters.R'
-    'methods-plot.R'
     'methods-print.R'
     'model.R'
     'train.R'
